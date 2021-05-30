@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings"></script><script src="../../storage.js"></script><script src="../../crates.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg">
 <link rel="alternate icon" type="image/png" href="../../favicon-16x16.png">
-<link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../calloop/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../brush.svg" width="18" height="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
+<link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../calloop/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../brush.svg" width="18" height="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
                 <a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" height="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
@@ -123,6 +123,41 @@
 <span id="120">120</span>
 <span id="121">121</span>
 <span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
+<span id="135">135</span>
+<span id="136">136</span>
+<span id="137">137</span>
+<span id="138">138</span>
+<span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
+<span id="149">149</span>
+<span id="150">150</span>
+<span id="151">151</span>
+<span id="152">152</span>
+<span id="153">153</span>
+<span id="154">154</span>
+<span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Calloop, a Callback-based Event Loop</span>
 <span class="doccomment">//!</span>
@@ -139,50 +174,85 @@
 <span class="doccomment">//!</span>
 <span class="doccomment">//! ## How to use it</span>
 <span class="doccomment">//!</span>
+<span class="doccomment">//! For simple uses, you can just add event sources with callbacks to the event</span>
+<span class="doccomment">//! loop. For example, here&#39;s a runnable program that exits after five seconds:</span>
+<span class="doccomment">//!</span>
 <span class="doccomment">//! ```no_run</span>
-<span class="doccomment">//! extern crate calloop;</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! use calloop::{generic::Generic, EventLoop, Interest, Mode};</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! use std::time::Duration;</span>
+<span class="doccomment">//! use calloop::{timer::Timer, EventLoop, LoopSignal};</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! fn main() {</span>
-<span class="doccomment">//!     // Create the event loop</span>
-<span class="doccomment">//!     let mut event_loop = EventLoop::try_new()</span>
-<span class="doccomment">//!                 .expect(&quot;Failed to initialize the event loop!&quot;);</span>
-<span class="doccomment">//!     // Retrieve an handle. It is used to insert new sources into the event loop</span>
-<span class="doccomment">//!     // It can be cloned, allowing you to insert sources from within source callbacks</span>
+<span class="doccomment">//!     // Create the event loop. The loop is parameterised by the kind of shared</span>
+<span class="doccomment">//!     // data you want the callbacks to use. In this case, we want to be able to</span>
+<span class="doccomment">//!     // stop the loop when the timer fires, so we provide the loop with a</span>
+<span class="doccomment">//!     // LoopSignal, which has the ability to stop the loop from within events. We</span>
+<span class="doccomment">//!     // just annotate the type here; the actual data is provided later in the</span>
+<span class="doccomment">//!     // run() call.</span>
+<span class="doccomment">//!     let mut event_loop: EventLoop&lt;LoopSignal&gt; =</span>
+<span class="doccomment">//!         EventLoop::try_new().expect(&quot;Failed to initialize the event loop!&quot;);</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//!     // Retrieve a handle. It is used to insert new sources into the event loop</span>
+<span class="doccomment">//!     // It can be cloned, allowing you to insert sources from within source</span>
+<span class="doccomment">//!     // callbacks.</span>
 <span class="doccomment">//!     let handle = event_loop.handle();</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//!     // Inserting an event source takes this general form</span>
-<span class="doccomment">//!     // it can also be done from within the callback of an other event source</span>
-<span class="doccomment">//! #   let (_ping, source) = calloop::ping::make_ping().unwrap();</span>
-<span class="doccomment">//!     handle.insert_source(</span>
-<span class="doccomment">//!         // a type implementing the EventSource trait</span>
-<span class="doccomment">//!         source,</span>
-<span class="doccomment">//!         // a callback that is invoked whenever this source generates an event</span>
-<span class="doccomment">//!         |event, metadata, shared_data| {</span>
-<span class="doccomment">//!             // This callback is given 3 values:</span>
-<span class="doccomment">//!             // - the event generated by the source</span>
-<span class="doccomment">//!             // - &amp;mut access to some metadata, specific to the event source</span>
-<span class="doccomment">//!             // - &amp;mut access to the global shared data that was passed to EventLoop::dispatch</span>
-<span class="doccomment">//!         }</span>
-<span class="doccomment">//!     );</span>
+<span class="doccomment">//!     // Create our event source, a timer. Note that this is also parameterised by</span>
+<span class="doccomment">//!     // the data for the events it generates. We&#39;ve let Rust infer that here.</span>
+<span class="doccomment">//!     let source = Timer::new().expect(&quot;Failed to create timer event source!&quot;);</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//!     // Actual run of your loop</span>
+<span class="doccomment">//!     // Most event source APIs provide two things: an event source to go into the</span>
+<span class="doccomment">//!     // event loop, and some way of triggering that source from elsewhere. In</span>
+<span class="doccomment">//!     // this case, we use a handle to the timer to set timeouts.</span>
 <span class="doccomment">//!     //</span>
-<span class="doccomment">//!     // Dispatch received events to their callbacks, waiting at most 20 ms for</span>
-<span class="doccomment">//!     // new events between each invocation of the provided callback.</span>
+<span class="doccomment">//!     // Note that this can go before or after the call to insert_source(), and</span>
+<span class="doccomment">//!     // even inside another event callback.</span>
+<span class="doccomment">//!     let timer_handle = source.handle();</span>
+<span class="doccomment">//!     timer_handle.add_timeout(std::time::Duration::from_secs(5), &quot;Timeout reached!&quot;);</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//!     // Inserting an event source takes this general form. It can also be done</span>
+<span class="doccomment">//!     // from within the callback of another event source.</span>
+<span class="doccomment">//!     handle</span>
+<span class="doccomment">//!         .insert_source(</span>
+<span class="doccomment">//!             // a type which implements the EventSource trait</span>
+<span class="doccomment">//!             source,</span>
+<span class="doccomment">//!             // a callback that is invoked whenever this source generates an event</span>
+<span class="doccomment">//!             |event, _metadata, shared_data| {</span>
+<span class="doccomment">//!                 // This callback is given 3 values:</span>
+<span class="doccomment">//!                 // - the event generated by the source (in our case, a string slice)</span>
+<span class="doccomment">//!                 // - &amp;mut access to some metadata, specific to the event source (in our case, a</span>
+<span class="doccomment">//!                 //   timer handle)</span>
+<span class="doccomment">//!                 // - &amp;mut access to the global shared data that was passed to EventLoop::run or</span>
+<span class="doccomment">//!                 //   EventLoop::dispatch (in our case, a LoopSignal object to stop the loop)</span>
+<span class="doccomment">//!                 //</span>
+<span class="doccomment">//!                 // The return type is just () because nothing uses it. Some</span>
+<span class="doccomment">//!                 // sources will expect a Result of some kind instead.</span>
+<span class="doccomment">//!                 println!(&quot;Event fired: {}&quot;, event);</span>
+<span class="doccomment">//!                 shared_data.stop();</span>
+<span class="doccomment">//!             },</span>
+<span class="doccomment">//!         )</span>
+<span class="doccomment">//!         .expect(&quot;Failed to insert event source!&quot;);</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//!     // Create the shared data for our loop.</span>
+<span class="doccomment">//!     let mut shared_data = event_loop.get_signal();</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//!     // Actually run the event loop. This will dispatch received events to their</span>
+<span class="doccomment">//!     // callbacks, waiting at most 20ms for new events between each invocation of</span>
+<span class="doccomment">//!     // the provided callback (pass None for the timeout argument if you want to</span>
+<span class="doccomment">//!     // wait indefinitely between events).</span>
 <span class="doccomment">//!     //</span>
-<span class="doccomment">//!     // The `&amp;mut shared_data` is a mutable reference that will be forwarded to all</span>
-<span class="doccomment">//!     // your callbacks, allowing them to share some state</span>
-<span class="doccomment">//! #   let mut shared_data = ();</span>
-<span class="doccomment">//!     event_loop.run(Duration::from_millis(20), &amp;mut shared_data, |shared_data| {</span>
-<span class="doccomment">//!         /*</span>
-<span class="doccomment">//!         * Insert here the processing you need to do do between each waiting session</span>
-<span class="doccomment">//!         * like your drawing logic if you&#39;re doing a GUI app for example.</span>
-<span class="doccomment">//!         */</span>
-<span class="doccomment">//!     });</span>
+<span class="doccomment">//!     // This is where we pass the *value* of the shared data, as a mutable</span>
+<span class="doccomment">//!     // reference that will be forwarded to all your callbacks, allowing them to</span>
+<span class="doccomment">//!     // share some state</span>
+<span class="doccomment">//!     event_loop</span>
+<span class="doccomment">//!         .run(</span>
+<span class="doccomment">//!             std::time::Duration::from_millis(20),</span>
+<span class="doccomment">//!             &amp;mut shared_data,</span>
+<span class="doccomment">//!             |_shared_data| {</span>
+<span class="doccomment">//!                 // Finally, this is where you can insert the processing you need</span>
+<span class="doccomment">//!                 // to do do between each waiting event eg. drawing logic if</span>
+<span class="doccomment">//!                 // you&#39;re doing a GUI app.</span>
+<span class="doccomment">//!             },</span>
+<span class="doccomment">//!         )</span>
+<span class="doccomment">//!         .expect(&quot;Error during event loop!&quot;);</span>
 <span class="doccomment">//! }</span>
 <span class="doccomment">//! ```</span>
 <span class="doccomment">//!</span>
@@ -232,20 +302,20 @@
 
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">sys</span>::{<span class="ident">Interest</span>, <span class="ident">Mode</span>, <span class="ident">Poll</span>, <span class="ident">Readiness</span>, <span class="ident">Token</span>};
 
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">loop_logic</span>::{<span class="ident">EventLoop</span>, <span class="ident">InsertError</span>, <span class="ident">LoopHandle</span>, <span class="ident">LoopSignal</span>, <span class="ident">RegistrationToken</span>};
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">sources</span>::<span class="kw-2">*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::loop_logic</span>::{<span class="ident">EventLoop</span>, <span class="ident">InsertError</span>, <span class="ident">LoopHandle</span>, <span class="ident">LoopSignal</span>, <span class="ident">RegistrationToken</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::sources</span>::<span class="kw-2">*</span>;
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">io</span>;
 <span class="kw">mod</span> <span class="ident">list</span>;
 <span class="kw">mod</span> <span class="ident">loop_logic</span>;
 <span class="kw">mod</span> <span class="ident">sources</span>;
 
-<span class="kw">fn</span> <span class="ident">no_nix_err</span>(<span class="ident">err</span>: <span class="ident">nix</span>::<span class="ident">Error</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">std</span>::<span class="ident">io</span>::<span class="ident">Error</span> {
+<span class="kw">fn</span> <span class="ident">no_nix_err</span>(<span class="ident">err</span>: <span class="ident">nix::Error</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">std::io::Error</span> {
     <span class="kw">match</span> <span class="ident">err</span> {
-        ::<span class="ident">nix</span>::<span class="ident">Error</span>::<span class="ident">Sys</span>(<span class="ident">errno</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">errno</span>.<span class="ident">into</span>(),
-        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+        <span class="ident">::nix::Error::Sys</span>(<span class="ident">errno</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">errno</span>.<span class="ident">into</span>(),
+        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable!</span>(),
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="calloop" data-search-js="../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="calloop" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
     <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>
