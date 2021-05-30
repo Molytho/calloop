@@ -955,7 +955,6 @@
 <span id="952">952</span>
 <span id="953">953</span>
 <span id="954">954</span>
-<span id="955">955</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std::cell::RefCell</span>;
 <span class="kw">use</span> <span class="ident">std::fmt</span>::{<span class="self">self</span>, <span class="ident">Debug</span>, <span class="ident">Formatter</span>};
@@ -1088,13 +1087,12 @@
     <span class="doccomment">/// Use this function if you need access to the event source after its insertion in the loop.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// See also `insert_source`.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">register_dispatcher</span><span class="op">&lt;</span><span class="ident">S</span>, <span class="ident">F</span><span class="op">&gt;</span>(
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">register_dispatcher</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="ident">dispatcher</span>: <span class="ident">Dispatcher</span><span class="op">&lt;</span><span class="ident">S</span>, <span class="ident">F</span><span class="op">&gt;</span>,
+        <span class="ident">dispatcher</span>: <span class="ident">Dispatcher</span><span class="op">&lt;</span><span class="lifetime">&#39;l</span>, <span class="ident">S</span>, <span class="ident">Data</span><span class="op">&gt;</span>,
     ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io::Result</span><span class="op">&lt;</span><span class="ident">RegistrationToken</span><span class="op">&gt;</span>
     <span class="kw">where</span>
         <span class="ident">S</span>: <span class="ident">EventSource</span> <span class="op">+</span> <span class="lifetime">&#39;l</span>,
-        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="ident">S::Event</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">S::Metadata</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Data</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">S::Ret</span> <span class="op">+</span> <span class="lifetime">&#39;l</span>,
     {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">sources</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">sources</span>.<span class="ident">borrow_mut</span>();
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">poll</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">poll</span>.<span class="ident">borrow_mut</span>();
@@ -1681,7 +1679,7 @@
         .<span class="ident">unwrap</span>();
 
         <span class="kw">let</span> <span class="ident">source</span> <span class="op">=</span> <span class="ident">Generic::from_fd</span>(<span class="ident">sock1</span>, <span class="ident">Interest::READ</span>, <span class="ident">Mode::Level</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">dispatcher</span> <span class="op">=</span> <span class="ident">Dispatcher::new</span>(<span class="ident">source</span>, <span class="op">|</span><span class="kw">_</span>, <span class="ident">fd</span>, <span class="ident">dispatched</span><span class="op">|</span> {
+        <span class="kw">let</span> <span class="ident">dispatcher</span> <span class="op">=</span> <span class="ident">Dispatcher::new</span>(<span class="ident">source</span>, <span class="op">|</span><span class="kw">_</span>, <span class="ident">fd</span>, <span class="ident">dispatched</span><span class="op">|</span> {
             <span class="kw-2">*</span><span class="ident">dispatched</span> <span class="op">=</span> <span class="bool-val">true</span>;
             <span class="comment">// read all contents available to drain the socket</span>
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span> <span class="op">=</span> [<span class="number">0u8</span>; <span class="number">32</span>];
