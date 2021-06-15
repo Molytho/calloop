@@ -955,6 +955,23 @@
 <span id="952">952</span>
 <span id="953">953</span>
 <span id="954">954</span>
+<span id="955">955</span>
+<span id="956">956</span>
+<span id="957">957</span>
+<span id="958">958</span>
+<span id="959">959</span>
+<span id="960">960</span>
+<span id="961">961</span>
+<span id="962">962</span>
+<span id="963">963</span>
+<span id="964">964</span>
+<span id="965">965</span>
+<span id="966">966</span>
+<span id="967">967</span>
+<span id="968">968</span>
+<span id="969">969</span>
+<span id="970">970</span>
+<span id="971">971</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std::cell::RefCell</span>;
 <span class="kw">use</span> <span class="ident">std::fmt</span>::{<span class="self">self</span>, <span class="ident">Debug</span>, <span class="ident">Formatter</span>};
@@ -967,8 +984,7 @@
 
 <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::list::SourceList</span>;
 <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::sources</span>::{<span class="ident">Dispatcher</span>, <span class="ident">EventSource</span>, <span class="ident">Idle</span>, <span class="ident">IdleDispatcher</span>};
-<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::Poll</span>;
-<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::Token</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">Poll</span>, <span class="ident">PostAction</span>, <span class="ident">Token</span>};
 
 <span class="kw">type</span> <span class="ident">IdleCallback</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span>, <span class="ident">Data</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">RefCell</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">IdleDispatcher</span><span class="op">&lt;</span><span class="ident">Data</span><span class="op">&gt;</span> <span class="op">+</span> <span class="lifetime">&#39;i</span><span class="op">&gt;</span><span class="op">&gt;</span>;
 
@@ -1288,7 +1304,25 @@
                 .<span class="ident">get_dispatcher</span>(<span class="ident">event</span>.<span class="ident">token</span>);
 
             <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">disp</span>) <span class="op">=</span> <span class="ident">opt_disp</span> {
-                <span class="ident">disp</span>.<span class="ident">process_events</span>(<span class="ident">event</span>.<span class="ident">readiness</span>, <span class="ident">event</span>.<span class="ident">token</span>, <span class="ident">data</span>)<span class="question-mark">?</span>;
+                <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="ident">disp</span>.<span class="ident">process_events</span>(<span class="ident">event</span>.<span class="ident">readiness</span>, <span class="ident">event</span>.<span class="ident">token</span>, <span class="ident">data</span>)<span class="question-mark">?</span>;
+
+                <span class="kw">match</span> <span class="ident">ret</span> {
+                    <span class="ident">PostAction::Reregister</span> <span class="op">=</span><span class="op">&gt;</span> {
+                        <span class="ident">disp</span>.<span class="ident">reregister</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">handle</span>.<span class="ident">inner</span>.<span class="ident">poll</span>.<span class="ident">borrow_mut</span>(), <span class="ident">event</span>.<span class="ident">token</span>)<span class="question-mark">?</span>;
+                    }
+                    <span class="ident">PostAction::Disable</span> <span class="op">=</span><span class="op">&gt;</span> {
+                        <span class="ident">disp</span>.<span class="ident">unregister</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">handle</span>.<span class="ident">inner</span>.<span class="ident">poll</span>.<span class="ident">borrow_mut</span>())<span class="question-mark">?</span>;
+                    }
+                    <span class="ident">PostAction::Remove</span> <span class="op">=</span><span class="op">&gt;</span> {
+                        <span class="comment">// delete the source from the list, it&#39;ll be cleaned up with the if just below</span>
+                        <span class="self">self</span>.<span class="ident">handle</span>
+                            .<span class="ident">inner</span>
+                            .<span class="ident">sources</span>
+                            .<span class="ident">borrow_mut</span>()
+                            .<span class="ident">del_source</span>(<span class="ident">event</span>.<span class="ident">token</span>);
+                    }
+                    <span class="ident">PostAction::Continue</span> <span class="op">=</span><span class="op">&gt;</span> {}
+                }
 
                 <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">handle</span>.<span class="ident">inner</span>.<span class="ident">sources</span>.<span class="ident">borrow</span>().<span class="ident">contains</span>(<span class="ident">event</span>.<span class="ident">token</span>) {
                     <span class="comment">// the source has been removed from within its callback, unregister it</span>
@@ -1411,8 +1445,8 @@
     <span class="kw">use</span> <span class="ident">std::time::Duration</span>;
 
     <span class="kw">use</span> <span class="kw">crate</span>::{
-        <span class="ident">generic::Generic</span>, <span class="ident">ping</span>::<span class="kw-2">*</span>, <span class="ident">timer::Timer</span>, <span class="ident">Dispatcher</span>, <span class="ident">Interest</span>, <span class="ident">Mode</span>, <span class="ident">Poll</span>, <span class="ident">Readiness</span>,
-        <span class="ident">RegistrationToken</span>, <span class="ident">Token</span>,
+        <span class="ident">generic::Generic</span>, <span class="ident">ping</span>::<span class="kw-2">*</span>, <span class="ident">timer::Timer</span>, <span class="ident">Dispatcher</span>, <span class="ident">Interest</span>, <span class="ident">Mode</span>, <span class="ident">Poll</span>, <span class="ident">PostAction</span>,
+        <span class="ident">Readiness</span>, <span class="ident">RegistrationToken</span>, <span class="ident">Token</span>,
     };
 
     <span class="kw">use</span> <span class="kw">super</span><span class="ident">::EventLoop</span>;
@@ -1517,7 +1551,7 @@
         <span class="kw">let</span> <span class="ident">event_loop</span> <span class="op">=</span> <span class="ident">EventLoop</span>::<span class="op">&lt;</span>()<span class="op">&gt;</span><span class="ident">::try_new</span>().<span class="ident">unwrap</span>();
         <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="ident">event_loop</span>.<span class="ident">handle</span>().<span class="ident">insert_source</span>(
             <span class="kw">crate</span><span class="ident">::sources::generic::Generic::from_fd</span>(<span class="number">420</span>, <span class="ident">Interest::READ</span>, <span class="ident">Mode::Level</span>),
-            <span class="op">|</span><span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span><span class="op">|</span> <span class="prelude-val">Ok</span>(()),
+            <span class="op">|</span><span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span><span class="op">|</span> <span class="prelude-val">Ok</span>(<span class="ident">PostAction::Continue</span>),
         );
         <span class="macro">assert!</span>(<span class="ident">ret</span>.<span class="ident">is_err</span>());
     }
@@ -1527,7 +1561,7 @@
         <span class="kw">let</span> <span class="ident">event_loop</span> <span class="op">=</span> <span class="ident">EventLoop</span>::<span class="op">&lt;</span>()<span class="op">&gt;</span><span class="ident">::try_new</span>().<span class="ident">unwrap</span>();
         <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="ident">event_loop</span>.<span class="ident">handle</span>().<span class="ident">insert_source</span>(
             <span class="kw">crate</span><span class="ident">::sources::generic::Generic::from_fd</span>(<span class="number">0</span>, <span class="ident">Interest::EMPTY</span>, <span class="ident">Mode::Level</span>),
-            <span class="op">|</span><span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span><span class="op">|</span> <span class="prelude-val">Ok</span>(()),
+            <span class="op">|</span><span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span><span class="op">|</span> <span class="prelude-val">Ok</span>(<span class="ident">PostAction::Continue</span>),
         );
         <span class="macro">assert!</span>(<span class="ident">ret</span>.<span class="ident">is_ok</span>());
     }
@@ -1589,7 +1623,7 @@
                 <span class="ident">readiness</span>: <span class="ident">Readiness</span>,
                 <span class="ident">token</span>: <span class="ident">Token</span>,
                 <span class="kw-2">mut</span> <span class="ident">callback</span>: <span class="ident">F</span>,
-            ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">std::io::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
+            ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">std::io::Result</span><span class="op">&lt;</span><span class="ident">PostAction</span><span class="op">&gt;</span>
             <span class="kw">where</span>
                 <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="self">Self</span><span class="ident">::Event</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="ident">::Metadata</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span><span class="ident">::Ret</span>,
             {
@@ -1600,7 +1634,7 @@
                     <span class="self">self</span>.<span class="ident">ping2</span>
                         .<span class="ident">process_events</span>(<span class="ident">readiness</span>, <span class="ident">token</span>, <span class="op">|</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> ()<span class="op">|</span> <span class="ident">callback</span>(<span class="number">2</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> ()))
                 } <span class="kw">else</span> {
-                    <span class="prelude-val">Ok</span>(())
+                    <span class="prelude-val">Ok</span>(<span class="ident">PostAction::Continue</span>)
                 }
             }
 
@@ -1699,7 +1733,7 @@
                     }
                 }
             }
-            <span class="prelude-val">Ok</span>(())
+            <span class="prelude-val">Ok</span>(<span class="ident">PostAction::Continue</span>)
         });
 
         <span class="kw">let</span> <span class="ident">sock_token_1</span> <span class="op">=</span> <span class="ident">event_loop</span>
@@ -1889,12 +1923,12 @@
             <span class="kw">_</span>: <span class="ident">Readiness</span>,
             <span class="kw">_</span>: <span class="ident">Token</span>,
             <span class="kw-2">mut</span> <span class="ident">callback</span>: <span class="ident">F</span>,
-        ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">std::io::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
+        ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">std::io::Result</span><span class="op">&lt;</span><span class="ident">PostAction</span><span class="op">&gt;</span>
         <span class="kw">where</span>
             <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="self">Self</span><span class="ident">::Event</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="ident">::Metadata</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span><span class="ident">::Ret</span>,
         {
             <span class="ident">callback</span>((), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> ());
-            <span class="prelude-val">Ok</span>(())
+            <span class="prelude-val">Ok</span>(<span class="ident">PostAction::Continue</span>)
         }
 
         <span class="kw">fn</span> <span class="ident">register</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Poll</span>, <span class="kw">_</span>: <span class="ident">Token</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">std::io::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {

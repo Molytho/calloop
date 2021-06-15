@@ -9,7 +9,7 @@ notification itself, and the monitored object is provided to your callback as th
 argument.</p>
 
 <div class="example-wrap"><pre class="rust rust-example-rendered">
-<span class="kw">use</span> <span class="ident">calloop</span>::{<span class="ident">generic::Generic</span>, <span class="ident">Interest</span>, <span class="ident">Mode</span>};
+<span class="kw">use</span> <span class="ident">calloop</span>::{<span class="ident">generic::Generic</span>, <span class="ident">Interest</span>, <span class="ident">Mode</span>, <span class="ident">PostAction</span>};
 
 <span class="ident">handle</span>.<span class="ident">insert_source</span>(
     <span class="comment">// wrap your IO object in a Generic, here we register for read readiness</span>
@@ -19,10 +19,10 @@ argument.</p>
         <span class="comment">// The first argument of the callback is a Readiness</span>
         <span class="comment">// The second is a &amp;mut reference to your object</span>
 
-        <span class="comment">// your callback needs to return a Result&lt;(), std::io::Error&gt;</span>
+        <span class="comment">// your callback needs to return a Result&lt;PostAction, std::io::Error&gt;</span>
         <span class="comment">// if it returns an error, the event loop will consider this event</span>
-        <span class="comment">// event source as erroring and report it to the user</span>
-        <span class="prelude-val">Ok</span>(())
+        <span class="comment">// event source as erroring and report it to the user.</span>
+        <span class="prelude-val">Ok</span>(<span class="ident">PostAction::Continue</span>)
     }
 );</pre></div>
 <p>It can also help you implementing your own event sources: just have
