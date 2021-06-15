@@ -571,7 +571,7 @@
         <span class="kw">let</span> <span class="ident">disp</span> <span class="op">=</span> <span class="ident">dispatcher</span>.<span class="ident">borrow</span>();
         <span class="self">self</span>.<span class="ident">poll</span>.<span class="ident">borrow_mut</span>().<span class="ident">reregister</span>(
             <span class="ident">disp</span>.<span class="ident">fd</span>,
-            <span class="ident">Interest::EMPTY</span>,
+            <span class="ident">disp</span>.<span class="ident">interest</span>,
             <span class="ident">Mode::OneShot</span>,
             <span class="ident">Token</span> {
                 <span class="ident">id</span>: <span class="ident">disp</span>.<span class="ident">id</span>,
