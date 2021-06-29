@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["calloop"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/beta/std/os/imp/unix/io/trait.AsRawFd.html\" title=\"trait std::os::imp::unix::io::AsRawFd\">AsRawFd</a> for <a class=\"struct\" href=\"calloop/generic/struct.Fd.html\" title=\"struct calloop::generic::Fd\">Fd</a>","synthetic":false,"types":["calloop::sources::generic::Fd"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
