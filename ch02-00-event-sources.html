@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Use a network socket - A Guide to Calloop</title>
+        <title>Using event sources - A Guide to Calloop</title>
         
         
 
@@ -95,7 +95,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="ch00-00-where-to-start.html">Where to start</a></li><li class="chapter-item expanded "><a href="ch01-00-how-an-event-loop-works.html"><strong aria-hidden="true">1.</strong> How an event loop works</a></li><li class="chapter-item expanded "><a href="ch02-00-a-simple-example.html"><strong aria-hidden="true">2.</strong> A simple example</a></li><li class="chapter-item expanded "><a href="ch03-00-how-to-do-x-in-calloop.html"><strong aria-hidden="true">3.</strong> How to do X in Calloop</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch03-01-run-async-code.html"><strong aria-hidden="true">3.1.</strong> Run async code</a></li><li class="chapter-item expanded "><a href="ch03-02-run-a-subprocess.html"><strong aria-hidden="true">3.2.</strong> Run a subprocess</a></li><li class="chapter-item expanded "><a href="ch03-03-use-blocking-io-types.html"><strong aria-hidden="true">3.3.</strong> Use blocking IO types</a></li><li class="chapter-item expanded "><a href="ch03-04-use-a-network-socket.html" class="active"><strong aria-hidden="true">3.4.</strong> Use a network socket</a></li><li class="chapter-item expanded "><a href="ch03-05-write-integration-tests.html"><strong aria-hidden="true">3.5.</strong> Write integration tests</a></li></ol></li><li class="chapter-item expanded "><a href="ch04-00-a-full-example-zeromq.html"><strong aria-hidden="true">4.</strong> A full example: ZeroMQ</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch04-01-composition.html"><strong aria-hidden="true">4.1.</strong> Composition</a></li><li class="chapter-item expanded "><a href="ch04-02-creating-our-source-part-1-our-types.html"><strong aria-hidden="true">4.2.</strong> Creating our source, part I: our types</a></li><li class="chapter-item expanded "><a href="ch04-03-creating-our-source-part-2-setup-methods.html"><strong aria-hidden="true">4.3.</strong> Creating our source, part II: setup methods</a></li><li class="chapter-item expanded "><a href="ch04-04-creating-our-source-part-3-processing-events-almost.html"><strong aria-hidden="true">4.4.</strong> Creating our source, part III: processing events (almost)</a></li><li class="chapter-item expanded "><a href="ch04-05-creating-our-source-part-4-processing-events-really.html"><strong aria-hidden="true">4.5.</strong> Creating our source, part IV: processing events (really)</a></li><li class="chapter-item expanded "><a href="ch04-06-the-full-zeromq-event-source-code.html"><strong aria-hidden="true">4.6.</strong> The full ZeroMQ event source code</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="ch00-00-where-to-start.html">Where to start</a></li><li class="chapter-item expanded "><a href="ch01-00-how-an-event-loop-works.html"><strong aria-hidden="true">1.</strong> How an event loop works</a></li><li class="chapter-item expanded "><a href="ch02-00-event-sources.html" class="active"><strong aria-hidden="true">2.</strong> Using event sources</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch02-01-generic.html"><strong aria-hidden="true">2.1.</strong> Monitoring a file descriptor</a></li><li class="chapter-item expanded "><a href="ch02-02-timers.html"><strong aria-hidden="true">2.2.</strong> Timers</a></li><li class="chapter-item expanded "><a href="ch02-03-ping.html"><strong aria-hidden="true">2.3.</strong> Ping</a></li><li class="chapter-item expanded "><a href="ch02-04-channels.html"><strong aria-hidden="true">2.4.</strong> Channels</a></li><li class="chapter-item expanded "><a href="ch02-05-signals.html"><strong aria-hidden="true">2.5.</strong> Unix Signals</a></li></ol></li><li class="chapter-item expanded "><a href="ch03-00-async-await.html"><strong aria-hidden="true">3.</strong> I need async/await!</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch03-01-run-async-code.html"><strong aria-hidden="true">3.1.</strong> Run async code</a></li><li class="chapter-item expanded "><a href="ch03-02-async-io-types.html"><strong aria-hidden="true">3.2.</strong> Async IO types</a></li></ol></li><li class="chapter-item expanded "><a href="ch04-00-a-full-example-zeromq.html"><strong aria-hidden="true">4.</strong> A full example: ZeroMQ</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch04-01-composition.html"><strong aria-hidden="true">4.1.</strong> Composition</a></li><li class="chapter-item expanded "><a href="ch04-02-creating-our-source-part-1-our-types.html"><strong aria-hidden="true">4.2.</strong> Creating our source, part I: our types</a></li><li class="chapter-item expanded "><a href="ch04-03-creating-our-source-part-2-setup-methods.html"><strong aria-hidden="true">4.3.</strong> Creating our source, part II: setup methods</a></li><li class="chapter-item expanded "><a href="ch04-04-creating-our-source-part-3-processing-events-almost.html"><strong aria-hidden="true">4.4.</strong> Creating our source, part III: processing events (almost)</a></li><li class="chapter-item expanded "><a href="ch04-05-creating-our-source-part-4-processing-events-really.html"><strong aria-hidden="true">4.5.</strong> Creating our source, part IV: processing events (really)</a></li><li class="chapter-item expanded "><a href="ch04-06-the-full-zeromq-event-source-code.html"><strong aria-hidden="true">4.6.</strong> The full ZeroMQ event source code</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -169,22 +169,21 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="use-a-network-socket"><a class="header" href="#use-a-network-socket">Use a network socket</a></h1>
-<p>This will almost certainly be a specialised case of <a href="ch04-03-use-blocking-io-types.html">adapting a blocking IO type</a> — as long as your socket type implements the <a href="https://doc.rust-lang.org/stable/std/os/unix/io/trait.AsRawFd.html"><code>AsRawFd</code></a> trait, you can use the approach there.</p>
-<p>If it is something more sophisticated, it may expose some other way to integrate with event loops eg. exposing a file descriptor for notification like <a href="ch03-00-a-full-example-zeromq.html">ZeroMQ does</a>. In that case you can create a new type that combines components from Calloop to utilise such an interface.</p>
+                        <h1 id="using-event-sources"><a class="header" href="#using-event-sources">Using event sources</a></h1>
+<p>Calloop's structure is entierely built around the <code>EventSource</code> trait, which represents something that is capable of generating events. To receive those events, you need to give ownership of the event source to calloop, alongside with a closure that will be invoked whenever said source generated an event. This is thus a push-based model, that is most suited for contextes where your program needs to react to (unpredictable) outside events, rather than wait efficiently for the completion of some operation it initiated.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="ch03-03-use-blocking-io-types.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="ch01-00-how-an-event-loop-works.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
                         
-                            <a rel="next" href="ch03-05-write-integration-tests.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="ch02-01-generic.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -196,13 +195,13 @@
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a rel="prev" href="ch03-03-use-blocking-io-types.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="ch01-00-how-an-event-loop-works.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a rel="next" href="ch03-05-write-integration-tests.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="ch02-01-generic.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 

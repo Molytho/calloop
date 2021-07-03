@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Creating our source, part I: our types - A Guide to Calloop</title>
+        <title>Unix Signals - A Guide to Calloop</title>
         
         
 
@@ -95,7 +95,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="ch00-00-where-to-start.html">Where to start</a></li><li class="chapter-item expanded "><a href="ch01-00-how-an-event-loop-works.html"><strong aria-hidden="true">1.</strong> How an event loop works</a></li><li class="chapter-item expanded "><a href="ch02-00-event-sources.html"><strong aria-hidden="true">2.</strong> Using event sources</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch02-01-generic.html"><strong aria-hidden="true">2.1.</strong> Monitoring a file descriptor</a></li><li class="chapter-item expanded "><a href="ch02-02-timers.html"><strong aria-hidden="true">2.2.</strong> Timers</a></li><li class="chapter-item expanded "><a href="ch02-03-ping.html"><strong aria-hidden="true">2.3.</strong> Ping</a></li><li class="chapter-item expanded "><a href="ch02-04-channels.html"><strong aria-hidden="true">2.4.</strong> Channels</a></li><li class="chapter-item expanded "><a href="ch02-05-signals.html"><strong aria-hidden="true">2.5.</strong> Unix Signals</a></li></ol></li><li class="chapter-item expanded "><a href="ch03-00-async-await.html"><strong aria-hidden="true">3.</strong> I need async/await!</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch03-01-run-async-code.html"><strong aria-hidden="true">3.1.</strong> Run async code</a></li><li class="chapter-item expanded "><a href="ch03-02-async-io-types.html"><strong aria-hidden="true">3.2.</strong> Async IO types</a></li></ol></li><li class="chapter-item expanded "><a href="ch04-00-a-full-example-zeromq.html"><strong aria-hidden="true">4.</strong> A full example: ZeroMQ</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch04-01-composition.html"><strong aria-hidden="true">4.1.</strong> Composition</a></li><li class="chapter-item expanded "><a href="ch04-02-creating-our-source-part-1-our-types.html" class="active"><strong aria-hidden="true">4.2.</strong> Creating our source, part I: our types</a></li><li class="chapter-item expanded "><a href="ch04-03-creating-our-source-part-2-setup-methods.html"><strong aria-hidden="true">4.3.</strong> Creating our source, part II: setup methods</a></li><li class="chapter-item expanded "><a href="ch04-04-creating-our-source-part-3-processing-events-almost.html"><strong aria-hidden="true">4.4.</strong> Creating our source, part III: processing events (almost)</a></li><li class="chapter-item expanded "><a href="ch04-05-creating-our-source-part-4-processing-events-really.html"><strong aria-hidden="true">4.5.</strong> Creating our source, part IV: processing events (really)</a></li><li class="chapter-item expanded "><a href="ch04-06-the-full-zeromq-event-source-code.html"><strong aria-hidden="true">4.6.</strong> The full ZeroMQ event source code</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="ch00-00-where-to-start.html">Where to start</a></li><li class="chapter-item expanded "><a href="ch01-00-how-an-event-loop-works.html"><strong aria-hidden="true">1.</strong> How an event loop works</a></li><li class="chapter-item expanded "><a href="ch02-00-event-sources.html"><strong aria-hidden="true">2.</strong> Using event sources</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch02-01-generic.html"><strong aria-hidden="true">2.1.</strong> Monitoring a file descriptor</a></li><li class="chapter-item expanded "><a href="ch02-02-timers.html"><strong aria-hidden="true">2.2.</strong> Timers</a></li><li class="chapter-item expanded "><a href="ch02-03-ping.html"><strong aria-hidden="true">2.3.</strong> Ping</a></li><li class="chapter-item expanded "><a href="ch02-04-channels.html"><strong aria-hidden="true">2.4.</strong> Channels</a></li><li class="chapter-item expanded "><a href="ch02-05-signals.html" class="active"><strong aria-hidden="true">2.5.</strong> Unix Signals</a></li></ol></li><li class="chapter-item expanded "><a href="ch03-00-async-await.html"><strong aria-hidden="true">3.</strong> I need async/await!</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch03-01-run-async-code.html"><strong aria-hidden="true">3.1.</strong> Run async code</a></li><li class="chapter-item expanded "><a href="ch03-02-async-io-types.html"><strong aria-hidden="true">3.2.</strong> Async IO types</a></li></ol></li><li class="chapter-item expanded "><a href="ch04-00-a-full-example-zeromq.html"><strong aria-hidden="true">4.</strong> A full example: ZeroMQ</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch04-01-composition.html"><strong aria-hidden="true">4.1.</strong> Composition</a></li><li class="chapter-item expanded "><a href="ch04-02-creating-our-source-part-1-our-types.html"><strong aria-hidden="true">4.2.</strong> Creating our source, part I: our types</a></li><li class="chapter-item expanded "><a href="ch04-03-creating-our-source-part-2-setup-methods.html"><strong aria-hidden="true">4.3.</strong> Creating our source, part II: setup methods</a></li><li class="chapter-item expanded "><a href="ch04-04-creating-our-source-part-3-processing-events-almost.html"><strong aria-hidden="true">4.4.</strong> Creating our source, part III: processing events (almost)</a></li><li class="chapter-item expanded "><a href="ch04-05-creating-our-source-part-4-processing-events-really.html"><strong aria-hidden="true">4.5.</strong> Creating our source, part IV: processing events (really)</a></li><li class="chapter-item expanded "><a href="ch04-06-the-full-zeromq-event-source-code.html"><strong aria-hidden="true">4.6.</strong> The full ZeroMQ event source code</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -169,94 +169,20 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="creating-our-source-part-i-our-types"><a class="header" href="#creating-our-source-part-i-our-types">Creating our source, part I: our types</a></h1>
-<p>In the last chapter we worked out a list of the event sources we need to compose into a new type:</p>
-<ol>
-<li><code>calloop::generic::Generic</code></li>
-<li><code>calloop::channel::Channel</code></li>
-<li><code>calloop::ping::Ping</code></li>
-</ol>
-<p>So at a minimum, our type needs to contain these:</p>
-<pre><code class="language-rust noplayground">pub struct ZeroMQSource
-{
-    // Calloop components.
-    socket_source: calloop::generic::Generic&lt;calloop::generic::Fd&gt;,
-    mpsc_receiver: calloop::channel::Channel&lt;?&gt;,
-    wake_ping_receiver: calloop::ping::PingSource,
-}
-</code></pre>
-<p>Note that I've left the type for the channel as <code>?</code> — we'll get to that a bit later.</p>
-<p>What else do we need? If the <code>PingSource</code> is there to wake up the loop manually, we need to keep the other end of it. The ping is an internal detail — users of our type don't need to know it's there. We also need the zsocket itself, so we can actually detect and process events on it. That gives us:</p>
-<pre><code class="language-rust noplayground">pub struct ZeroMQSource
-{
-    // Calloop components.
-    socket_source: calloop::generic::Generic&lt;calloop::generic::Fd&gt;,
-    mpsc_receiver: calloop::channel::Channel&lt;?&gt;,
-    wake_ping_receiver: calloop::ping::PingSource,
-
-    /// Sending end of the ping source.
-    wake_ping_sender: calloop::ping::Ping,
-
-    /// The underlying ZeroMQ socket.
-    socket: zmq::Socket,
-}
-</code></pre>
-<h2 id="the-message-type"><a class="header" href="#the-message-type">The message type</a></h2>
-<p>The most obvious candidate for the type of the message queue would be <code>zmq::Message</code>. But ZeroMQ sockets are capable of sending multipart messages, and this is even mandatory for eg. the <code>PUB</code> zsocket type, where the first part of the message is the topic.</p>
-<p>Therefore it makes more sense to accept a sequence of messages to cover the most general case, and that sequence can have a length of one for single-part messages. But with one more tweak: we can accept a sequence of things that <em>can be transformed</em> into <code>zmq::Message</code> values. The exact type we'll use will be a generic type like so:</p>
-<pre><code class="language-rust noplayground">pub struct ZeroMQSource&lt;T&gt;
-where
-    T: IntoIterator,
-    T::Item: Into&lt;zmq::Message&gt;,
-{
-    mpsc_receiver: calloop::channel::Channel&lt;T&gt;,
-	// ...
-}
-</code></pre>
-<blockquote>
-<h3 id="enforcing-single-messages"><a class="header" href="#enforcing-single-messages">Enforcing single messages</a></h3>
-<p>Remember that it's not just <code>Vec&lt;T&gt;</code> and other sequence types that implement <code>IntoIterator</code> — <code>Option&lt;T&gt;</code> implements it too! There is also <code>std::iter::Once&lt;T&gt;</code>. So if a user of our API wants to enforce that at most (or exactly) one message is sent, they can use this API with <code>T</code> being, say, <code>Option&lt;zmq::Message&gt;</code>.</p>
-</blockquote>
-<h2 id="associated-types"><a class="header" href="#associated-types">Associated types</a></h2>
-<p>The <code>EventSource</code> trait has three associated types:</p>
-<ul>
-<li>
-<p><code>Event</code> - when an event is generated that our caller cares about (ie. not some internal thing), this is the data we provide to their callback. This will be another sequence of messages, but because we're constructing it we can be more opinionated about the type and use the return type of <code>zmq::Socket::recv_multipart()</code> which is <code>Vec&lt;Vec&lt;u8&gt;&gt;</code>.</p>
-</li>
-<li>
-<p><code>Metadata</code> - this is a more persistent kind of data, perhaps the underlying file descriptor or socket, or maybe some stateful object that the callback can manipulate. It is passed by exclusive reference to the <code>Metadata</code> type. In our case we don't use this, so it's <code>()</code>.</p>
-</li>
-<li>
-<p><code>Ret</code> - this is the return type of the callback that's called on an event. Usually this will be a <code>Result</code> of some sort; in our case it's <code>std::io::Result&lt;()&gt;</code> just to signal whether some underlying operation failed or not.</p>
-</li>
-</ul>
-<p>So together these are:</p>
-<pre><code class="language-rust noplayground">impl&lt;T&gt; calloop::EventSource for ZeroMQSource&lt;T&gt;
-where
-    T: IntoIterator,
-    T::Item: Into&lt;zmq::Message&gt;,
-{
-    type Event = Vec&lt;Vec&lt;u8&gt;&gt;;
-    type Metadata = ();
-    type Ret = io::Result&lt;()&gt;;
-    // ...
-}
-</code></pre>
-<hr />
-<p>I have saved one surprise for later to emphasise some important principles, but for now, let's move on to defining some methods!</p>
+                        <h1 id="unix-signals"><a class="header" href="#unix-signals">Unix Signals</a></h1>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="ch04-01-composition.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="ch02-04-channels.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
                         
-                            <a rel="next" href="ch04-03-creating-our-source-part-2-setup-methods.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="ch03-00-async-await.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -268,13 +194,13 @@ where
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a rel="prev" href="ch04-01-composition.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="ch02-04-channels.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a rel="next" href="ch04-03-creating-our-source-part-2-setup-methods.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="ch03-00-async-await.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 
