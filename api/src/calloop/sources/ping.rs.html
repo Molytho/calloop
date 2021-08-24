@@ -226,7 +226,7 @@
     <span class="ident">unistd</span>::{<span class="ident">close</span>, <span class="ident">pipe2</span>, <span class="ident">read</span>, <span class="ident">write</span>},
 };
 
-<span class="kw">use</span> <span class="kw">super</span><span class="ident">::generic</span>::{<span class="ident">Fd</span>, <span class="ident">Generic</span>};
+<span class="kw">use</span> <span class="kw">super</span><span class="ident">::generic::Generic</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">EventSource</span>, <span class="ident">Interest</span>, <span class="ident">Mode</span>, <span class="ident">Poll</span>, <span class="ident">PostAction</span>, <span class="ident">Readiness</span>, <span class="ident">Token</span>, <span class="ident">TokenFactory</span>};
 
 <span class="doccomment">/// Create a new ping event source</span>
@@ -237,7 +237,7 @@
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">make_ping</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">std::io::Result</span><span class="op">&lt;</span>(<span class="ident">Ping</span>, <span class="ident">PingSource</span>)<span class="op">&gt;</span> {
     <span class="kw">let</span> (<span class="ident">read</span>, <span class="ident">write</span>) <span class="op">=</span> <span class="ident">pipe2</span>(<span class="ident">OFlag::O_CLOEXEC</span> <span class="op">|</span> <span class="ident">OFlag::O_NONBLOCK</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> <span class="ident">source</span> <span class="op">=</span> <span class="ident">PingSource</span> {
-        <span class="ident">pipe</span>: <span class="ident">Generic::from_fd</span>(<span class="ident">read</span>, <span class="ident">Interest::READ</span>, <span class="ident">Mode::Level</span>),
+        <span class="ident">pipe</span>: <span class="ident">Generic::new</span>(<span class="ident">read</span>, <span class="ident">Interest::READ</span>, <span class="ident">Mode::Level</span>),
     };
     <span class="kw">let</span> <span class="ident">ping</span> <span class="op">=</span> <span class="ident">Ping</span> {
         <span class="ident">pipe</span>: <span class="ident">Arc::new</span>(<span class="ident">CloseOnDrop</span>(<span class="ident">write</span>)),
@@ -253,7 +253,7 @@
 <span class="doccomment">/// once all [`Ping`] instances are dropped.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PingSource</span> {
-    <span class="ident">pipe</span>: <span class="ident">Generic</span><span class="op">&lt;</span><span class="ident">Fd</span><span class="op">&gt;</span>,
+    <span class="ident">pipe</span>: <span class="ident">Generic</span><span class="op">&lt;</span><span class="ident">RawFd</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">EventSource</span> <span class="kw">for</span> <span class="ident">PingSource</span> {
@@ -270,12 +270,12 @@
     <span class="kw">where</span>
         <span class="ident">C</span>: <span class="ident">FnMut</span>(<span class="self">Self</span><span class="ident">::Event</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="ident">::Metadata</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span><span class="ident">::Ret</span>,
     {
-        <span class="self">self</span>.<span class="ident">pipe</span>.<span class="ident">process_events</span>(<span class="ident">readiness</span>, <span class="ident">token</span>, <span class="op">|</span><span class="kw">_</span>, <span class="ident">fd</span><span class="op">|</span> {
+        <span class="self">self</span>.<span class="ident">pipe</span>.<span class="ident">process_events</span>(<span class="ident">readiness</span>, <span class="ident">token</span>, <span class="op">|</span><span class="kw">_</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fd</span><span class="op">|</span> {
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span> <span class="op">=</span> [<span class="number">0u8</span>; <span class="number">32</span>];
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">read_something</span> <span class="op">=</span> <span class="bool-val">false</span>;
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">action</span> <span class="op">=</span> <span class="ident">PostAction::Continue</span>;
             <span class="kw">loop</span> {
-                <span class="kw">match</span> <span class="ident">read</span>(<span class="ident">fd</span>.<span class="number">0</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>) {
+                <span class="kw">match</span> <span class="ident">read</span>(<span class="ident">fd</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>) {
                     <span class="prelude-val">Ok</span>(<span class="number">0</span>) <span class="op">=</span><span class="op">&gt;</span> {
                         <span class="comment">// The other end of the pipe was closed, mark ourselved to for removal</span>
                         <span class="ident">action</span> <span class="op">=</span> <span class="ident">PostAction::Remove</span>;
@@ -324,7 +324,7 @@
 
 <span class="kw">impl</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">PingSource</span> {
     <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span> <span class="ident">close</span>(<span class="self">self</span>.<span class="ident">pipe</span>.<span class="ident">file</span>.<span class="number">0</span>) {
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span> <span class="ident">close</span>(<span class="self">self</span>.<span class="ident">pipe</span>.<span class="ident">file</span>) {
             <span class="macro">log::warn!</span>(<span class="string">&quot;[calloop] Failed to close read ping: {:?}&quot;</span>, <span class="ident">e</span>);
         }
     }

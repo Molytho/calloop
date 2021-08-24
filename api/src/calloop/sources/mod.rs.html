@@ -313,6 +313,16 @@
 <span id="313">313</span>
 <span id="314">314</span>
 <span id="315">315</span>
+<span id="316">316</span>
+<span id="317">317</span>
+<span id="318">318</span>
+<span id="319">319</span>
+<span id="320">320</span>
+<span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
+<span id="324">324</span>
+<span id="325">325</span>
 </pre><pre class="rust">
 <span class="kw">use</span> <span class="ident">std</span>::{
     <span class="ident">cell</span>::{<span class="ident">Ref</span>, <span class="ident">RefCell</span>, <span class="ident">RefMut</span>},
@@ -452,12 +462,22 @@
         <span class="self">self</span>.<span class="ident">borrow_mut</span>().<span class="ident">source</span>.<span class="ident">register</span>(<span class="ident">poll</span>, <span class="ident">token_factory</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">reregister</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">poll</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Poll</span>, <span class="ident">token_factory</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">TokenFactory</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">borrow_mut</span>().<span class="ident">source</span>.<span class="ident">reregister</span>(<span class="ident">poll</span>, <span class="ident">token_factory</span>)
+    <span class="kw">fn</span> <span class="ident">reregister</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">poll</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Poll</span>, <span class="ident">token_factory</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">TokenFactory</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io::Result</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span> {
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="kw-2">mut</span> <span class="ident">me</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">try_borrow_mut</span>() {
+            <span class="ident">me</span>.<span class="ident">source</span>.<span class="ident">reregister</span>(<span class="ident">poll</span>, <span class="ident">token_factory</span>)<span class="question-mark">?</span>;
+            <span class="prelude-val">Ok</span>(<span class="bool-val">true</span>)
+        } <span class="kw">else</span> {
+            <span class="prelude-val">Ok</span>(<span class="bool-val">false</span>)
+        }
     }
 
-    <span class="kw">fn</span> <span class="ident">unregister</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">poll</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Poll</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">borrow_mut</span>().<span class="ident">source</span>.<span class="ident">unregister</span>(<span class="ident">poll</span>)
+    <span class="kw">fn</span> <span class="ident">unregister</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">poll</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Poll</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io::Result</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span> {
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="kw-2">mut</span> <span class="ident">me</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">try_borrow_mut</span>() {
+            <span class="ident">me</span>.<span class="ident">source</span>.<span class="ident">unregister</span>(<span class="ident">poll</span>)<span class="question-mark">?</span>;
+            <span class="prelude-val">Ok</span>(<span class="bool-val">true</span>)
+        } <span class="kw">else</span> {
+            <span class="prelude-val">Ok</span>(<span class="bool-val">false</span>)
+        }
     }
 }
 
@@ -471,9 +491,9 @@
 
     <span class="kw">fn</span> <span class="ident">register</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">poll</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Poll</span>, <span class="ident">token_factory</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">TokenFactory</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>;
 
-    <span class="kw">fn</span> <span class="ident">reregister</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">poll</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Poll</span>, <span class="ident">token_factory</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">TokenFactory</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>;
+    <span class="kw">fn</span> <span class="ident">reregister</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">poll</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Poll</span>, <span class="ident">token_factory</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">TokenFactory</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io::Result</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span>;
 
-    <span class="kw">fn</span> <span class="ident">unregister</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">poll</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Poll</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>;
+    <span class="kw">fn</span> <span class="ident">unregister</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">poll</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Poll</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io::Result</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span>;
 }
 
 <span class="comment">// An internal trait to erase the `F` type parameter of `DispatcherInner`</span>
