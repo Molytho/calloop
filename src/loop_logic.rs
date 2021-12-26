@@ -383,6 +383,20 @@ impl<'l, Data> EventLoop<'l, Data> {
         }
     }
 
+    fn dispatch_starts(&self, data: &mut Data) {
+        let  sources = self.handle.inner.sources.borrow();
+        sources.values().for_each(|value| {
+            value.on_dispatch_start(data);
+        })
+    }
+
+    fn dispatch_ends(&self) {
+        let sources = self.handle.inner.sources.borrow();
+        sources.values().for_each(|value| {
+            value.on_dispatch_end();
+        })
+    }
+
     /// Dispatch pending events to their callbacks
     ///
     /// If some sources have events available, their callbacks will be immediatly called.
@@ -396,7 +410,11 @@ impl<'l, Data> EventLoop<'l, Data> {
         timeout: D,
         data: &mut Data,
     ) -> io::Result<()> {
+        self.dispatch_starts(data);
+
         self.dispatch_events(timeout.into(), data)?;
+
+        self.dispatch_ends();
 
         self.dispatch_idles(data);
 

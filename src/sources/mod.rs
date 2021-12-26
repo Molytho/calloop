@@ -106,6 +106,13 @@ pub trait EventSource {
     /// You should unregister all your file descriptors from this [`Poll`](crate::Poll) using its
     /// [`Poll::unregister`](crate::Poll#method.unregister) method.
     fn unregister(&mut self, poll: &mut Poll) -> io::Result<()>;
+
+    fn on_dispatch_start<F>(&mut self, callback: F) -> ()
+    where
+        F: FnMut(Self::Event, &mut Self::Metadata) -> Self::Ret
+        {()}
+
+    fn on_dispatch_end(&mut self) -> () {()}
 }
 
 pub(crate) struct DispatcherInner<S, F> {
@@ -153,6 +160,20 @@ where
             Ok(false)
         }
     }
+
+    fn on_dispatch_start(&self, data: &mut Data) -> () {
+        let mut disp = self.borrow_mut();
+        let DispatcherInner {
+            ref mut source,
+            ref mut callback,
+        } = *disp;
+        source.on_dispatch_start(|event, meta| callback(event, meta, data));
+    }
+
+    fn on_dispatch_end(&self) -> () {
+        let source = &mut self.borrow_mut().source;
+        source.on_dispatch_end();
+    }
 }
 
 pub(crate) trait EventDispatcher<Data> {
@@ -168,6 +189,10 @@ pub(crate) trait EventDispatcher<Data> {
     fn reregister(&self, poll: &mut Poll, token_factory: &mut TokenFactory) -> io::Result<bool>;
 
     fn unregister(&self, poll: &mut Poll) -> io::Result<bool>;
+
+    fn on_dispatch_start(&self, data: &mut Data) -> () {()}
+
+    fn on_dispatch_end(&self) -> () {()}
 }
 
 // An internal trait to erase the `F` type parameter of `DispatcherInner`
